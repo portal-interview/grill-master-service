@@ -1,0 +1,34 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: grill-master-service
+  description: Order processing and routing service — the grill master orchestrates every order
+  annotations:
+    github.com/project-slug: portal-interview/grill-master-service
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: https://github.com/portal-interview/grill-master-service
+      title: GitHub
+spec:
+  type: service
+  lifecycle: production
+  owner: group:portal-interview/team-grill
+  system: ordering-system
+  providesApis:
+    - grill-master-api
+  consumesApis:
+    - kitchen-api
+    - deep-fryer-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: grill-master-api
+  description: Order processing and routing API
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:portal-interview/team-grill
+  system: ordering-system
+  definition:
+    $text: ./openapi.yaml

@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: Grill Master API
+  description: Order processing and routing — the grill master orchestrates every order at Flavortown
+  version: 1.0.0
+servers:
+  - url: https://grill-master.flavortown.internal
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Healthy
+  /orders:
+    post:
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+      responses:
+        '201':
+          description: Order created and routed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{orderId}:
+    get:
+      summary: Get order by ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{orderId}/route:
+    put:
+      summary: Route order to kitchen station
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                station:
+                  type: string
+                priority:
+                  type: string
+                  enum: [normal, rush, vip]
+      responses:
+        '200':
+          description: Order routed
+  /stations:
+    get:
+      summary: List kitchen stations
+      responses:
+        '200':
+          description: Available stations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Station'
+components:
+  schemas:
+    OrderCreate:
+      type: object
+      properties:
+        customerId:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              menuItemId:
+                type: string
+              quantity:
+                type: integer
+              modifications:
+                type: array
+                items:
+                  type: string
+        type:
+          type: string
+          enum: [dine_in, takeout, delivery]
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+        status:
+          type: string
+          enum: [received, routing, cooking, ready, delivered]
+        station:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Station:
+      type: object
+      properties:
+        name:
+          type: string
+          example: grill-1
+        type:
+          type: string
+          enum: [grill, fryer, prep, assembly]
+        activeOrders:
+          type: integer
+        maxCapacity:
+          type: integer
+        status:
+          type: string
+          enum: [active, idle, offline]

@@ -12,7 +12,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: group:portal-interview/team-grill
+  owner: group:default/team-grill
   system: ordering-system
   providesApis:
     - grill-master-api
@@ -28,7 +28,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: group:portal-interview/team-grill
+  owner: group:default/team-grill
   system: ordering-system
   definition:
     $text: ./openapi.yaml
